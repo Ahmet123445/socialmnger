@@ -100,6 +100,8 @@ Tarayıcıdan aç:
 http://167.86.99.131
 ```
 
+IP ile kurulumda `.env` içindeki `APP_DOMAIN=:80` kalabilir. Domain bağladığında bunu domain adına çevir.
+
 Demo giriş:
 
 ```text
