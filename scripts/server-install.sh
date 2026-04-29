@@ -21,6 +21,11 @@ apt update
 apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 systemctl enable --now docker
 
+if ! docker compose version >/dev/null 2>&1; then
+  curl -fsSL https://get.docker.com | sh
+  apt install -y docker-compose-plugin || true
+fi
+
 ufw allow OpenSSH
 ufw allow 80/tcp
 ufw allow 443/tcp

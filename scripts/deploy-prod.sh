@@ -17,6 +17,17 @@ fi
 cd "$APP_DIR"
 git pull --ff-only
 
+if ! docker compose version >/dev/null 2>&1; then
+  if [ "$(id -u)" -ne 0 ]; then
+    echo "Docker Compose plugin eksik. Root olarak scripts/server-install.sh çalıştır."
+    exit 1
+  fi
+  curl -fsSL https://get.docker.com | sh
+  apt-get update -y
+  apt-get install -y docker-compose-plugin || true
+  systemctl enable --now docker
+fi
+
 if [ ! -f .env ]; then
   cp .env.production.example .env
 
