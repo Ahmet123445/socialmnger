@@ -1,0 +1,23 @@
+{$APP_DOMAIN:167.86.99.131} {
+  encode gzip zstd
+
+  handle_path /api/* {
+    reverse_proxy backend:8000
+  }
+
+  handle_path /docs* {
+    reverse_proxy backend:8000
+  }
+
+  handle_path /openapi.json {
+    reverse_proxy backend:8000
+  }
+
+  handle_path /minio/* {
+    reverse_proxy minio:9001
+  }
+
+  handle {
+    reverse_proxy frontend:3000
+  }
+}
