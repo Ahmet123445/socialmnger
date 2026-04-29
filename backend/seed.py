@@ -92,6 +92,7 @@ async def seed():
         await db.flush()
 
         # Create platform accounts (mock)
+        platform_accounts = {}
         for platform in ["youtube", "tiktok", "instagram", "twitter"]:
             account = PlatformAccount(
                 user_id=demo_user.id,
@@ -100,6 +101,8 @@ async def seed():
                 status="mock",
             )
             db.add(account)
+            platform_accounts[platform] = account
+        await db.flush()
 
         # Create AI setting
         ai_setting = AISetting(
@@ -133,7 +136,7 @@ async def seed():
                 for platform in content_data["platforms"]:
                     post = PlatformPost(
                         content_item_id=content.id,
-                        platform_account_id=demo_user.id,
+                        platform_account_id=platform_accounts[platform].id,
                         platform=platform,
                         platform_post_id=f"mock_{uuid.uuid4().hex[:12]}",
                         caption=content_data.get("platform_captions", {}).get(platform, content_data["general_caption"]),

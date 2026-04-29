@@ -17,6 +17,7 @@ def publish_to_platform(self, job_id: str):
     from app.models.publish_job import PublishJob
     from app.models.content_item import ContentItem
     from app.models.platform_post import PlatformPost
+    from app.models.platform_account import PlatformAccount
     from app.adapters.registry import get_adapter
     from sqlalchemy import select
 
@@ -56,6 +57,23 @@ def publish_to_platform(self, job_id: str):
                 )
 
                 if publish_result.success:
+                    account_result = await db.execute(
+                        select(PlatformAccount).where(
+                            PlatformAccount.user_id == content.user_id,
+                            PlatformAccount.platform == job.platform,
+                        )
+                    )
+                    platform_account = account_result.scalar_one_or_none()
+                    if not platform_account:
+                        platform_account = PlatformAccount(
+                            user_id=content.user_id,
+                            platform=job.platform,
+                            platform_username=f"mock_{job.platform}",
+                            status="mock",
+                        )
+                        db.add(platform_account)
+                        await db.flush()
+
                     job.status = "completed"
                     job.completed_at = datetime.utcnow()
                     job.result = {
@@ -66,7 +84,7 @@ def publish_to_platform(self, job_id: str):
 
                     platform_post = PlatformPost(
                         content_item_id=content.id,
-                        platform_account_id=content.user_id,
+                        platform_account_id=platform_account.id,
                         platform=job.platform,
                         platform_post_id=publish_result.platform_post_id,
                         caption=caption,
