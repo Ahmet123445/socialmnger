@@ -28,6 +28,12 @@ if ! docker compose version >/dev/null 2>&1; then
   systemctl enable --now docker
 fi
 
+if [ ! -f /etc/apparmor.d/abi/4.0 ]; then
+  apt-get install --reinstall -y -o Dpkg::Options::=--force-confmiss apparmor || true
+  systemctl restart apparmor || true
+  systemctl restart docker.socket docker.service || true
+fi
+
 if [ ! -f .env ]; then
   cp .env.production.example .env
 
