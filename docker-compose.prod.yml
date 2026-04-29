@@ -66,6 +66,8 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       CORS_ORIGINS: ${CORS_ORIGINS}
       CREATE_DEMO_DATA: ${CREATE_DEMO_DATA:-true}
+    ports:
+      - "127.0.0.1:18000:8000"
     command: >
       sh -c "
         python -m app.db.init_db &&
@@ -107,6 +109,8 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+    ports:
+      - "127.0.0.1:13000:3000"
 
   caddy:
     image: caddy:2-alpine
